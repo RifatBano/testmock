@@ -1,0 +1,160 @@
+package com.cg.SmartDeploy;
+
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class SmartDeployApplicationTests {
+
+//	 @LocalServerPort
+//	 int randomServerPort;
+	 
+	 private MockMvc mockmvc;    
+	 
+	 
+	 @InjectMocks
+	 private Contollerclass object;
+	 
+	 
+	 @Before
+	 public void setup() throws Exception
+	 {
+		 mockmvc=MockMvcBuilders.standaloneSetup(object).build();
+	 }
+ 	
+	 @Test
+	 public void managerLoginTest() throws ProgramExeption {
+		 
+		 ((ResultActions) ((MockHttpServletRequestBuilder) mockmvc.perform(post("/login")))
+		 .contentType(MediaType.APPLICATION_JSON)
+		 .content("{ \"id\": \"10001\", \"password\" : \"system123\" }")
+		 .accept(MediaType.APPLICATION_JSON))
+		 .andExpect((ResultMatcher) jsonPath("$.id").exists())
+		 .andExpect((ResultMatcher) jsonPath("$.password").exists())
+		 .andExpect((ResultMatcher) jsonPath("$.id").value("10001"))
+		 .andExpect((ResultMatcher) jsonPath("$.password").value("system123"))
+		 .andDo(print());
+	 }
+	 
+	 
+	 @Test
+		public void pieChartGenerationTest() ProgramExeption{
+		 
+		 ((ResultActions) ((MockHttpServletRequestBuilder) mockmvc.perform(post("/demand")))
+		 .contentType(MediaType.APPLICATION_JSON)
+		 .content("{ \"beginDate\": \"01-03-2018\", \"endDate\" : \"21-06-2018\" }")
+		 .accept(MediaType.APPLICATION_JSON))
+		 .andExpect((ResultMatcher) jsonPath("$.beginDate").exists())
+		 .andExpect((ResultMatcher) jsonPath("$.endDate").exists())
+		 .andExpect((ResultMatcher) jsonPath("$.beginDate").value("01-03-2018"))
+		 .andExpect((ResultMatcher) jsonPath("$.endDate").value("21-06-2018"))
+		 .andDo(print());
+         
+		}
+	 
+	 @Test
+		public void deployEmployeesTest() ProgramExeption{
+		 ((ResultActions) ((MockHttpServletRequestBuilder) mockmvc.perform(post("/deployEmployee")))
+				 .contentType(MediaType.APPLICATION_JSON)
+				 .content("{ \"empId\": \"143682\", \"empName\" : \"Rahim\",\"skill\" : \"Full Stack Developer\", \"grade\" : \"A+\" }")
+				 .accept(MediaType.APPLICATION_JSON))
+				 .andExpect((ResultMatcher) jsonPath("$.empId").exists())
+				 .andExpect((ResultMatcher) jsonPath("$.empName").exists())
+				 .andExpect((ResultMatcher) jsonPath("$.skill").exists())
+				 .andExpect((ResultMatcher) jsonPath("$.grade").exists())
+				 
+				 .andExpect((ResultMatcher) jsonPath("$.empId").value("143682"))
+				 .andExpect((ResultMatcher) jsonPath("$.empName").value("Rahim"))
+				 .andExpect((ResultMatcher) jsonPath("$.skill").value("Full Stack Developer"))
+				 .andExpect((ResultMatcher) jsonPath("$.grade").value("A+"))
+				 .andDo(print());
+		         
+
+		}
+	 
+		@Test
+		public void getDetailsTest() ProgramExeption{
+			mockmvc.perform(get("/benchEmployeeDetails").accept(MediaType.APPLICATION_JSON))
+			.andExpect((ResultMatcher)jsonPath("$.id").value("10001"))
+			.andExpect((ResultMatcher)jsonPath("$.name").value("vdbavbx"))
+			.andExpect((ResultMatcher)jsonPath("$.grade").value("A+"))
+			.andExpect((ResultMatcher)jsonPath("$.skill").value("java"))
+			.andDo(print());
+			
+		}
+}
+/*	
+	@Test
+	public void managerLoginTest() throws ProgramExeption {
+		RestTemplate restTemplate = new RestTemplate();
+	    final String baseUrl = "http://localhost:"+randomServerPort+"/employees/";
+	    URI uri = new URI(baseUrl);
+	    Login login = new Login(null, "Adam", "Gilly", "test@email.com");
+	     
+	    HttpHeaders headers = new HttpHeaders();
+	 
+	    HttpEntity<Employee> request = new HttpEntity<>(employee, headers);
+	     
+	    try
+	    {
+	        restTemplate.postForEntity(uri, request, String.class);
+	        Assert.fail();
+	    }
+	    catch(HttpClientErrorException ex)
+	    {
+	        //Verify bad request and missing header
+	        Assert.assertEquals(400, ex.getRawStatusCode());
+	        Assert.assertEquals(true, ex.getResponseBodyAsString().contains("Missing request header"));
+	    }
+
+	
+	@Test
+	public void pieChartGenerationTest() ProgramExeption{
+		
+
+	}
+	@Test
+	public void deployEmployeesTest() ProgramExeption{
+		
+
+	}
+	@Test
+	public void getDetailsTest() ProgramExeption{
+		
+		RestTemplate restTemplate = new RestTemplate();
+	     
+	    final String baseUrl = "http://localhost:" + randomServerPort + "/details";
+	    URI uri = new URI(baseUrl);
+	 
+	    ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
+	     
+	    //Verify request succeed
+	    Assert.assertEquals(200, result.getStatusCodeValue());
+	    Assert.assertEquals(true, result.getBody().contains("employeeList"));
+
+	}
+
+https://www.youtube.com/watch?v=8S8o46avgAw
+
+	*/
+
